@@ -12,7 +12,6 @@ pygame.display.set_caption('2048')
 screen = pygame.display.set_mode((650, 650))
 
 
-# Функция для загрузки изображения
 def load_image(name, colorkey=None):
     fullname = os.path.join(name)
     image = pygame.image.load(fullname)
@@ -32,19 +31,16 @@ class Board:
             self.target_score = 2048
         elif difficulty == 'hard':
             self.target_score = 4096
-        # Инициализация доски
         if len(list) > 1:
             self.board = list
         else:
             self.board = self.gen_board()
-        # Цвета для различных значений на доске
         self.colors = {'2': '#8133ff', '4': '#aa33ff', '8': '#c933ff',
                        '16': '#eb33ff', '32': '#ff33eb',
                        '64': '#ff33c2', '128': '#ff337e', '256': '#ff333d',
                        '512': '#ad232a', '1024': '#ad5123', '2048': '#ff5500', '4096': '#ffe100'}
         self.score = score
 
-    # Генерация начальной доски
     def gen_board(self):
         board = [[0] * 5 for _ in range(5)]
         x = random.randint(0, 4)
@@ -60,7 +56,6 @@ class Board:
         board[x1][y1] = 2
         return board
 
-    # Движение кирпичей влево
     def move_left(self):
         for i in self.board:
             while 0 in i:
@@ -75,7 +70,6 @@ class Board:
                     self.board[i].pop(j + 1)
                     self.board[i].append(0)
 
-    # Движение кирпичей вправо
     def move_right(self):
         for i in self.board:
             while 0 in i:
@@ -90,10 +84,8 @@ class Board:
                     self.board[i].pop(j - 1)
                     self.board[i].insert(0, 0)
 
-    # Движение кирпичей вверх
     def move_up(self):
         new_matrix = [[0] * 5 for _ in range(5)]
-        # Транспонирование матрицы
         for i in range(5):
             for j in range(5):
                 new_matrix[j][i] = self.board[i][j]
@@ -109,17 +101,16 @@ class Board:
                     self.score += new_matrix[i][j]
                     new_matrix[i].pop(j + 1)
                     new_matrix[i].append(0)
-        # Отмена транспонирования и обновление доски
+
         self.board.clear()
         self.board = [[0] * 5 for _ in range(5)]
         for i in range(5):
             for j in range(5):
                 self.board[j][i] = new_matrix[i][j]
 
-    # Движение кирпичей вниз
     def move_down(self):
         new_matrix = [[0] * 5 for _ in range(5)]
-        # Транспонирование матрицы
+
         for i in range(5):
             for j in range(5):
                 new_matrix[j][i] = self.board[i][j]
@@ -135,22 +126,19 @@ class Board:
                     self.score += new_matrix[i][j]
                     new_matrix[i].pop(j - 1)
                     new_matrix[i].insert(0, 0)
-        # Отмена транспонирования и обновление доски
+
         self.board.clear()
         self.board = [[0] * 5 for _ in range(5)]
         for i in range(5):
             for j in range(5):
                 self.board[j][i] = new_matrix[i][j]
 
-    # Получение текущего счета
     def get_score(self):
         return self.score
 
-    # Получение текущей доски
     def get_board(self):
         return self.board
 
-    # Генерация нового блока на доске
     def new_block(self):
         f = False
         for i in range(5):
@@ -162,19 +150,18 @@ class Board:
             if self.board[x][y] == 0:
                 f = False
                 self.board[x][y] = random.choice([2, 4])
-        # Обновление экрана после добавления нового блока
+
         self.render(screen)
         pygame.display.flip()
 
-    # Отрисовка доски на экране
     def render(self, screen):
-        # Создание прозрачной поверхности для отрисовки
+
         s = pygame.Surface((600, 600), pygame.SRCALPHA)
         sur = pygame.Surface((108, 108), pygame.SRCALPHA)
-        # Заполнение фона
+
         pygame.draw.rect(s, pygame.Color((20, 20, 20)), (0, 0, 600, 600), 0)
         screen.blit(s, (100, 100))
-        # Отрисовка кирпичей на доске
+
         for i in range(5):
             for j in range(5):
                 x = 10 * (j + 1) + 108 * j + 100
@@ -225,20 +212,20 @@ class Board:
 
 class Button:
     def create_button(self, surface, color, x, y, length, height, text, text_color):
-        # Отрисовка кнопки
+
         surface = self.draw_button(surface, color, length, height, x, y)
         surface = self.write_text(surface, text, text_color, length, height, x, y)
         self.rect = pygame.Rect(x, y, length, height)
         return surface
 
     def write_text(self, surface, text, text_color, length, height, x, y):
-        # Отображение текста на кнопке
+
         myText = font2.render(text, 1, text_color)
         surface.blit(myText, ((x + length / 2) - myText.get_width() / 2, (y + height / 2) - myText.get_height() / 2))
         return surface
 
     def draw_button(self, surface, color, length, height, x, y):
-        # Создание поверхности для кнопки и ее отрисовка
+
         sur = pygame.Surface((length, height), pygame.SRCALPHA)
         pygame.draw.rect(sur, pygame.Color(color), (0, 0, length, height), 0)
         screen.blit(sur, (x, y))
@@ -258,7 +245,7 @@ def start_screen():
     font = pygame.font.SysFont('calibri', 80)
     string_rendered = font.render('2048', 1, pygame.Color('black'))
     screen.blit(string_rendered, (315, 60))
-    # Создание кнопок
+
     button_normal = Button()
     button_normal.create_button(screen, (25, 25, 25, 127), 160, 200, 220, 80, 'Начать обычную игру', (255, 255, 255))
 
@@ -276,7 +263,6 @@ def start_screen():
 
     pygame.display.flip()
 
-    # Обработка событий
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -305,7 +291,6 @@ def start_screen():
         pygame.display.flip()
 
 
-# Функция завершения работы программы
 def terminate():
     pygame.quit()
     sys.exit()
@@ -314,18 +299,16 @@ def terminate():
 def rules_window():
     screen.blit(fon, (0, 0))
     intro_text = [
-        'Ваша задача в этой увлекательной игре — собрать кирпич с цифрой «2048».',
-        'В начале игры вам предоставляются два кирпичика с цифрой «2». Нажимая',
-        'кнопки вверх, вправо, влево или вниз, все ваши кирпичи смещаются в ',
-        'выбранном направлении. При столкновении клеток с одинаковым ',
-        'числовым значением они объединяются, создавая сумму, вдвое большую.',
-        'Игра продолжается до тех пор, пока все пустые ячейки не заполнятся,',
-        'и вы больше не сможете перемещать кирпичи ни в одном из направлений.',
-        'Или же, конечно, когда на одном из кирпичей появится долгожданная цифра 2048.',
-        'Завершив игру, ваш результат заносится в турнирную таблицу,',
-        'отражая вашу мастерство в этом увлекательном кроссворде цифр.',
-        'Сможете ли вы достичь заветной цифры 2048 и войти в историю игры?',
-        'Сыграйте, чтобы узнать!'
+        'Your goal in this exciting game is to collect a tile with the number "2048".',
+        'In the beginning of the game, you are given two tiles with the number "2".',
+        'By pressing the up, right, left, or down buttons, all your tiles move in the chosen direction.',
+        'When tiles with the same numerical value collide, they merge, creating a new tile with a value twice as large.',
+        'The game continues until all empty cells are filled and you can no longer move the tiles in any direction.',
+        'Or, of course, when the long-awaited number 2048 appears on one of the tiles.',
+        'After finishing the game, your result is recorded in the leaderboard,',
+        'reflecting your mastery in this exciting number puzzle.',
+        'Can you reach the cherished number 2048 and go down in the history of the game?',
+        'Play to find out!'
     ]
     rules_text = font.render('Правила игры', 1, pygame.Color('black'))
     screen.blit(rules_text, (250, 20))
@@ -413,7 +396,6 @@ def game(flag, name=False, difficulty='normal'):
         score = str(board.get_score())
         font3 = pygame.font.SysFont('calibri', 30)
 
-        # Создание прозрачных поверхностей для текста
         score_surface = pygame.Surface((200, 50), pygame.SRCALPHA)
         name_surface = pygame.Surface((200, 50), pygame.SRCALPHA)
 
@@ -503,7 +485,6 @@ def game(flag, name=False, difficulty='normal'):
         return
 
 
-# Функция завершения игры
 def game_over(score, f):
     screen.blit(fon, (0, 0))
     if f == 1:
